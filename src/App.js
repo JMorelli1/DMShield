@@ -1,12 +1,14 @@
-import 'antd/dist/antd.css';
+import React from "react"
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ACTIONS} from './redux/ActionEnums';
 import store from "./redux/store/store"
 import {addUser} from "./redux/reducers/appReducer";
+import LandingPage from './containers/LandingPage/LandingPage';
+import About from './containers/About';
+import Layout from "antd/lib/layout/layout";
+import Home from "./containers/Home/Home";
 
-console.log(ACTIONS.ADD);
-
-function App() {
+const App = () => {
 
   store.dispatch({
     type: ACTIONS.ADD,
@@ -23,11 +25,14 @@ function App() {
   console.log(store.getState());
 
   return (
+    <Layout className="App">
     <BrowserRouter>
       <Switch>
-        {/* <Route exact path="/" component={}/> */}
+        <Route exact path="/" component={Home}/>
+        <Route exact path="/encounters" component={LandingPage}/>
       </Switch>
     </BrowserRouter>
+    </Layout>
     );
 }
 
