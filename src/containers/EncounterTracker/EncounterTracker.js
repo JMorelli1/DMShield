@@ -4,25 +4,8 @@ import { Content } from "antd/lib/layout/layout";
 import Header from "../../components/Header/Header";
 import chessboard from "../../assets/chessBoard.jpeg"
 import "./EncounterTracker.css";
-// import {getAllMagicItems} from "../services/Open5eService";s
 
 const EncounterTracker = (props) => {
-
-  // const [data, setData] = useState([]);
-  // const [loading, setLoading] = useState(true);
-
-  // useEffect(() => {
-  //   const loadData = async () => {
-  //     await getAllMagicItems().then((data) => {
-  //       if (data) {
-  //         setData(data);
-  //         setLoading(false);
-  //       }
-  //     });
-  //   };
-  //   loadData();
-  // },[])
-  // console.log(data)
 
 const columns = [
     {

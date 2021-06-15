@@ -1,17 +1,20 @@
 import React from "react"
-import {Layout, Table} from "antd";
 import { Content } from "antd/lib/layout/layout";
 import Header from "../../components/Header/Header";
+import dice from "../../assets/dice.jpeg"
 import "./Home.css";
 
-const Home = (props) => {
+const Home = () => {
 
   return (
-    <div className="Encounter-content">
-    <Header />
-    <Content className="App-content">
-      <p>Oooohhh all homey</p>
-    </Content>
+    <div>
+      <Header image={dice}/>
+      <Content>
+        <div className="home-body">
+          <p>Oooohhh all homey</p>
+          <span>Well.....I'm working on it</span>
+        </div>
+      </Content>
     </div>
   );
 }
