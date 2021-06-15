@@ -2,10 +2,10 @@ import React from "react"
 import {Layout, Table} from "antd";
 import { Content } from "antd/lib/layout/layout";
 import Header from "../../components/Header/Header";
-import "./LandingPage.css";
+import "./EncounterTracker.css";
 // import {getAllMagicItems} from "../services/Open5eService";s
 
-const LandingPage = (props) => {
+const EncounterTracker = (props) => {
 
   // const [data, setData] = useState([]);
   // const [loading, setLoading] = useState(true);
@@ -51,4 +51,4 @@ const columns = [
   );
 }
 
-export default LandingPage;
+export default EncounterTracker;

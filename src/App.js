@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ACTIONS} from './redux/ActionEnums';
 import store from "./redux/store/store"
 import {addUser} from "./redux/reducers/appReducer";
-import LandingPage from './containers/LandingPage/LandingPage';
+import EncounterTracker from './containers/EncounterTracker/EncounterTracker';
 import About from './containers/About';
 import Layout from "antd/lib/layout/layout";
 import Home from "./containers/Home/Home";
@@ -29,7 +29,7 @@ const App = () => {
     <BrowserRouter>
       <Switch>
         <Route exact path="/" component={Home}/>
-        <Route exact path="/encounters" component={LandingPage}/>
+        <Route exact path="/encounters" component={EncounterTracker}/>
       </Switch>
     </BrowserRouter>
     </Layout>
