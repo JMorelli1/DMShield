@@ -1,12 +1,15 @@
-import 'antd/dist/antd.css';
+import React from "react"
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ACTIONS} from './redux/ActionEnums';
-import store from "./redux/store/store"
+import store from "./redux/store/Store"
 import {addUser} from "./redux/reducers/appReducer";
+import EncounterTracker from './containers/EncounterTracker/EncounterTracker';
+import Layout from "antd/lib/layout/layout";
+import Home from "./containers/Home/Home";
+import Login from "./containers/Login/Login";
+import "./App.css"
 
-console.log(ACTIONS.ADD);
-
-function App() {
+const App = () => {
 
   store.dispatch({
     type: ACTIONS.ADD,
@@ -23,11 +26,17 @@ function App() {
   console.log(store.getState());
 
   return (
-    <BrowserRouter>
-      <Switch>
-        {/* <Route exact path="/" component={}/> */}
-      </Switch>
-    </BrowserRouter>
+    <Layout className="app">
+      <div className="app-main-layout">
+        <BrowserRouter>
+          <Switch>
+            <Route exact path="/" component={Home}/>
+            <Route exact path="/login" component={Login}/>
+            <Route exact path="/encounters" component={EncounterTracker}/>
+          </Switch>
+        </BrowserRouter>
+      </div>
+    </Layout>
     );
 }
 
