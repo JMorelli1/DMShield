@@ -1,1 +1,16 @@
+.encounter-main{
+    margin: 2%;
+}
 
+.encounter-list{
+    background-color: white;
+}
+
+.generate-button{
+    float: right;
+    margin-top: 1%;
+}
+
+.generator-form{
+    margin-bottom: 1%;
+}

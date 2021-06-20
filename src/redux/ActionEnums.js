@@ -1,5 +1,5 @@
-export const ACTIONS = {
-    ADD: "ADD_ITEM",
-    UPDATE: "UPDATE_ITEM",
-    REMOVE: "REMOVE_ITEM"
+export const actions = {
+    ADD_ALL_MONSTERS: "ADD_ALL_MONSTERS",
+    ADD_MONSTER: "ADD_MONSTER",
+    ADD_ENCOUNTER: "ADD_ENCOUNTER"
 };
