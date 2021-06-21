@@ -1,34 +1,34 @@
-import { actions } from "../ActionEnums"
+import { actions } from "../ActionEnums";
 
 export const initialState = {
-    monsters:[],
-    encounterData:[]
-}
+  monsters: [],
+  encounterData: [],
+  selectedEncounter: {},
+};
 
 export const EncounterReducer = (state = initialState, action) => {
-    switch(action.type){
-        case actions.ADD_ALL_MONSTERS:
-            return {
-                ...state,
-                monsters: action.payload.monsters
-            }
-        case actions.ADD_MONSTER: 
-            return {
-                ...state,
-                monsters: [
-                    ...state.monsters,
-                    action.payload.monster
-                ]
-            };
-        case actions.ADD_ENCOUNTER:
-            return {
-                ...state,
-                encounterData: [
-                    ...state.encounterData,
-                    action.payload
-                ]
-            }
-        default:
-            return state
-    }
-}
+  switch (action.type) {
+    case actions.ADD_ALL_MONSTERS:
+      return {
+        ...state,
+        monsters: action.payload.monsters,
+      };
+    case actions.ADD_MONSTER:
+      return {
+        ...state,
+        monsters: [...state.monsters, action.payload.monster],
+      };
+    case actions.ADD_ENCOUNTER:
+      return {
+        ...state,
+        encounterData: [...state.encounterData, action.payload],
+      };
+    case actions.SET_SELECTED_ENCOUNTER:
+      return {
+        ...state,
+        selectedEncounter: action.payload.encounter,
+      };
+    default:
+      return state;
+  }
+};

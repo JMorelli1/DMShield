@@ -144,7 +144,7 @@ const EncounterGenerator = (props) => {
 
   return (
     <div key="wrapperDiv">
-      <div className="encounter-main" key="encounterMain">
+      <div className="wrapper-div" key="encounterMain">
         <Row gutter={8}>
           <Col span={12}>
             <Form style={{ margin: "2%" }}>
