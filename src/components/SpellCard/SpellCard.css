@@ -1,0 +1,15 @@
+.spell-card-style{
+    text-align: left;
+    height: 30vh;
+}
+
+.info-modal{
+    height: 100vh;
+}
+
+span{
+    text-transform: capitalize;
+}
+p{
+    text-transform: none;
+}

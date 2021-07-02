@@ -1,38 +1,76 @@
-import React from "react"
-import {Table} from "antd";
-import { Content } from "antd/lib/layout/layout";
+import { Button, Col, Divider, Row, Table } from "antd";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import chessboard from "../../assets/chessBoard.jpeg";
 import Header from "../../components/Header/Header";
-import chessboard from "../../assets/chessBoard.jpeg"
+import EncounterGenerator from "./EncounterGenerator/EncounterGenerator";
+import { setSelectedEncounter } from "../../redux/actions/EncounterActions";
 import "./EncounterTracker.css";
 
 const EncounterTracker = (props) => {
+  const encounterState = useSelector((state) => state);
+  const [clicked, setClicked] = useState(false);
+  const dispatch = useDispatch();
 
-const columns = [
+  const handleView = (record) => {
+    dispatch(setSelectedEncounter(record));
+    props.history.push("/encounterView");
+  };
+
+  const encounterColumns = [
     {
-      title: 'name',
-      dataIndex: 'name',
-      key: 'name'
+      title: "",
+      render: (record) => (
+        <Button type="ghost" onClick={() => handleView(record)}>
+          View
+        </Button>
+      ),
     },
     {
-      title: 'Type',
-      dataIndex: 'type',
-      key: 'type'
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
     },
     {
-      title: 'Rarity',
-      dataIndex: 'rarity',
-      key: 'rarity'
-    }
-  ]
+      title: "Challenge Rating",
+      dataIndex: "challenge_rating",
+      key: "challenge_rating",
+    },
+  ];
 
   return (
-    <div>
-      <Header image={chessboard}/>
-      <Content className="app-content">
-        <Table  columns={columns} />
-      </Content>
+    <div key="wrapperDiv">
+      <Header image={chessboard} />
+      <div className="wrapper-div" key="encounterMain" hidden={clicked}>
+        <Row>
+          <Button type="primary" onClick={() => setClicked(!clicked)}>
+            Generate Encounter
+          </Button>
+        </Row>
+        <Divider />
+        <Row gutter={8}>
+          <Col span={24}>
+            <Table
+              key="encounterTable"
+              columns={encounterColumns}
+              dataSource={encounterState.encounterData}
+              onRow={(record, row) => {
+                return {
+                  onDoubleClick: () => {
+                    dispatch(setSelectedEncounter(record));
+                    props.history.push("/encounterView");
+                  },
+                };
+              }}
+            />
+          </Col>
+        </Row>
+      </div>
+      <div hidden={!clicked}>
+        <EncounterGenerator setClicked={setClicked} clicked={clicked} />
+      </div>
     </div>
   );
-}
+};
 
 export default EncounterTracker;

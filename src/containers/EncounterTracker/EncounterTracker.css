@@ -1,1 +1,12 @@
 
+.generate-button{
+    float: right;
+    margin-top: 1%;
+    margin-left: 1%;
+}
+
+.encounters-table{
+    margin-bottom: 1%;
+    margin-left: 1%;
+    margin-right: 1%;
+}
