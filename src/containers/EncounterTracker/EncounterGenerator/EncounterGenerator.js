@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Col,
@@ -10,13 +11,18 @@ import {
   Form,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  parseSpellCastingText,
+  parseInnateSpellCastingText,
+  parseCR,
+} from "../../../helper/Parser.js";
 import {
   addAllMonsters,
   addNewEncounter,
 } from "../../../redux/actions/EncounterActions";
 import { getData } from "../../../services/Open5eService";
+import { getAbilityScoreBonus } from "../../../services/MathEqService";
 import "./EncounterGenerator.css";
 
 const { Search } = Input;
@@ -31,17 +37,23 @@ const EncounterGenerator = (props) => {
   const encounterState = useSelector((state) => state);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const loadData = async () => {
-      await getData(process.env.REACT_APP_MONSTERS_PATH, 10).then((data) => {
-        if (data) {
-          dispatch(addAllMonsters(data.results));
-          setLoading(false);
-        }
-      });
-    };
-    loadData();
-  }, []);
+  useEffect(
+    () => {
+      const loadData = async () => {
+        await getData(process.env.REACT_APP_MONSTERS_PATH, 2500).then(
+          (data) => {
+            if (data) {
+              dispatch(addAllMonsters(data.results));
+              setLoading(false);
+            }
+          }
+        );
+      };
+      loadData();
+    },
+    [dispatch],
+    () => {}
+  );
 
   const handleCRTotal = (slug, type, cr) => {
     if (type === "up") {
@@ -65,22 +77,62 @@ const EncounterGenerator = (props) => {
     }
   };
 
-  const handleAddMonster = (record) => {
-    setEncounterGenerator([
-      ...encounterGenerator,
-      {
-        ...record,
-        count: 1,
-      },
-    ]);
-    console.log(encounterGenerator);
-    setChallengeTotal(challengeTotal + parseFloat(record.challenge_rating, 10));
+  const handleAddMonster = (monster) => {
+    let isInEncounter = false;
+    let parsedCR = parseCR(monster.challenge_rating);
+    let spells = {};
+    let updatedEncounter = encounterGenerator.map((m) => {
+      if (m.slug === monster.slug) {
+        isInEncounter = true;
+        return {
+          ...m,
+          count: m.count + 1,
+        };
+      }
+      return m;
+    });
+    if (isInEncounter) {
+      setEncounterGenerator([...updatedEncounter]);
+    } else {
+      if (monster.special_abilities.length >= 1) {
+        monster.special_abilities.forEach((specialA) => {
+          if (specialA.name === "Innate Spellcasting") {
+            spells = {
+              innate_spell_caster: parseInnateSpellCastingText(specialA.desc),
+            };
+          } else if (specialA.name === "Spellcasting") {
+            spells = {
+              ...spells,
+              spell_caster: parseSpellCastingText(specialA.desc),
+            };
+          }
+        });
+      }
+      setEncounterGenerator([
+        ...encounterGenerator,
+        {
+          ...monster,
+          count: 1,
+          current_hp: monster.hit_points,
+          challenge_rating: parsedCR,
+          spells,
+          abilityScoreBonus: {
+            strength: getAbilityScoreBonus(monster.strength),
+            dexterity: getAbilityScoreBonus(monster.dexterity),
+            intelligence: getAbilityScoreBonus(monster.intelligence),
+            wisdom: getAbilityScoreBonus(monster.wisdom),
+            charisma: getAbilityScoreBonus(monster.charisma),
+          },
+        },
+      ]);
+    }
+    setChallengeTotal(challengeTotal + parsedCR);
   };
 
   const handleGeneration = (btnName) => {
     if (btnName === "generate") {
       let encounter = {
-        monsters: [...encounterGenerator],
+        creatures: [...encounterGenerator],
       };
       dispatch(addNewEncounter(encounterName, challengeTotal, encounter));
     }
@@ -104,7 +156,7 @@ const EncounterGenerator = (props) => {
     );
   };
 
-  const onSearch = (value) => {
+  const handleSearch = (value) => {
     console.log(value);
     setSearchedTable(
       encounterState.monsters.filter((monster) =>
@@ -151,7 +203,7 @@ const EncounterGenerator = (props) => {
               <Form.Item label="Encounter Name: ">
                 <Input
                   style={{ width: "25vw" }}
-                  onChange={(value) => setEncounterName(value.target.value)}
+                  onChange={(event) => setEncounterName(event.target.value)}
                 />
               </Form.Item>
             </Form>
@@ -160,36 +212,36 @@ const EncounterGenerator = (props) => {
               key="encounterList"
               bordered
               dataSource={encounterGenerator}
-              renderItem={(item) => (
+              renderItem={(monster) => (
                 <List.Item
-                  key={item.slug}
+                  key={monster.slug}
                   actions={[
                     <div>
                       <label key="totalLabel">Total: </label>
                       <InputNumber
                         key="monsterInputNumber"
                         min={1}
+                        value={monster.count}
                         onStep={(event, info) => {
                           handleCRTotal(
-                            item.slug,
+                            monster.slug,
                             info.type,
-                            item.challenge_rating
+                            monster.challenge_rating
                           );
                         }}
-                        defaultValue={1}
                       />
                     </div>,
                     <Button
                       key="deleteEncounter"
-                      onClick={() => handleDelete(item.slug)}
+                      onClick={() => handleDelete(monster.slug)}
                     >
                       Delete
                     </Button>,
                   ]}
                 >
                   <Space>
-                    <label>Monster: {item.name}</label>
-                    <label>CR: {item.challenge_rating}</label>
+                    <label>Monster: {monster.name}</label>
+                    <label>CR: {monster.challenge_rating}</label>
                   </Space>
                 </List.Item>
               )}
@@ -224,7 +276,7 @@ const EncounterGenerator = (props) => {
           <Col span={12}>
             <Search
               placeholder="Search monsters"
-              onSearch={onSearch}
+              onSearch={handleSearch}
               style={{ marginBottom: "1%" }}
             />
             <Table

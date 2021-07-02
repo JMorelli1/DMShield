@@ -1,6 +1,6 @@
 import { actions } from "../ActionEnums";
 
-export const initialState = {
+const initialState = {
   monsters: [],
   encounterData: [],
   selectedEncounter: {},
@@ -22,6 +22,17 @@ export const EncounterReducer = (state = initialState, action) => {
       return {
         ...state,
         encounterData: [...state.encounterData, action.payload],
+      };
+    case actions.SET_SELECTED_ENCOUNTER_CREATURES:
+      return {
+        ...state,
+        selectedEncounter: {
+          ...state.selectedEncounter,
+          encounter: {
+            ...state.selectedEncounter.encounter,
+            creatures: [...action.payload.creatures],
+          },
+        },
       };
     case actions.SET_SELECTED_ENCOUNTER:
       return {

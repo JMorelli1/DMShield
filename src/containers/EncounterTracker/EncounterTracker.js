@@ -8,12 +8,24 @@ import { setSelectedEncounter } from "../../redux/actions/EncounterActions";
 import "./EncounterTracker.css";
 
 const EncounterTracker = (props) => {
-  // const [loading, setLoading] = useState(true);
   const encounterState = useSelector((state) => state);
   const [clicked, setClicked] = useState(false);
   const dispatch = useDispatch();
 
+  const handleView = (record) => {
+    dispatch(setSelectedEncounter(record));
+    props.history.push("/encounterView");
+  };
+
   const encounterColumns = [
+    {
+      title: "",
+      render: (record) => (
+        <Button type="ghost" onClick={() => handleView(record)}>
+          View
+        </Button>
+      ),
+    },
     {
       title: "Name",
       dataIndex: "name",

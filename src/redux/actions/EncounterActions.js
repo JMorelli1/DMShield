@@ -29,6 +29,15 @@ export const addNewEncounter = (name, challenge_rating, encounter) => {
   };
 };
 
+export const setSelectedEncounterCreatures = (creatures) => {
+  return {
+    type: actions.SET_SELECTED_ENCOUNTER_CREATURES,
+    payload: {
+      creatures,
+    },
+  };
+};
+
 export const setSelectedEncounter = (encounter) => {
   return {
     type: actions.SET_SELECTED_ENCOUNTER,

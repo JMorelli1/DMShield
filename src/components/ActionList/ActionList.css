@@ -1,0 +1,43 @@
+.action-card{
+    width: 100%;
+}
+
+.action-list-collapse{
+    width: 100%;
+}
+
+.legendary-title{
+    background: rgba(160, 82, 176, .5);
+    width: 100%;
+    text-align: center;
+}
+.special-title{
+    background-color: rgba(245, 166, 35, .5);
+    width: 100%;
+    margin: 0;
+    text-align: center;
+}
+.ordinary-title{
+    background-color: rgba(	224, 255, 255, .5);
+    width: 100%;
+    text-align: center;
+}
+
+.ordinary-box{
+    background-color: rgba(	224, 255, 255, .20);
+    padding: 16px;
+}
+
+.special-box{
+    background: rgba(245, 166, 35, .20);
+    padding: 16px;
+}
+
+.legendary-box{
+    background: rgba(160, 82, 176, .20);
+    padding: 16px;
+}
+
+.ant-collapse-content > .ant-collapse-content-box {
+    padding: 0px !important;
+}

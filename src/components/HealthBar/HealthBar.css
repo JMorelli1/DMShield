@@ -1,0 +1,43 @@
+.health-bar-div{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.health-bar-input{
+    width: 200px;
+}
+
+.health-bar-buttons{
+    width: 200px;
+    margin-top: 8px;
+    display: flex;
+    justify-content: stretch;
+}
+
+.health-bar-buttons .damage-button{
+    width: 95px;
+    margin-right: 10px;
+    border-color: #ff4d4f;
+    background-color: #ffa39e;
+}
+
+.health-bar-buttons .damage-button:hover{
+    color: white;
+    border-color: #ff4d4f;
+    background-color: #ffa39e;
+}
+
+.health-bar-buttons .heal-button{
+    width: 95px;
+    border-color: #52c41a;
+    background-color: #b7eb8f;
+}
+
+.health-bar-buttons .heal-button:hover{
+    color: white;
+    border-color: #52c41a;
+    background-color: #b7eb8f;
+}
