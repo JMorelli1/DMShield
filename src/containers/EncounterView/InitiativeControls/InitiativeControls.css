@@ -1,0 +1,38 @@
+.view-controls{
+    display: flex;
+    flex-direction: column;
+    padding: 5%;
+    margin-bottom: 3%;
+    margin-top: 3%;
+    border: gray solid 1px;
+    border-radius: 5px;
+    background-color: rgba(198, 198, 198, .5);
+}
+
+.handle-btns{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 12vh;
+}
+/*.handle-btns-step-3{*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    justify-content: space-around;*/
+/*    height: 10vh;*/
+/*}*/
+.group-initiative{
+    margin-right: 1%;
+}
+
+.start-encounter-btn{
+    background-color: #b7eb8f;
+    border-color: #52c41a;
+    color: black;
+}
+.start-encounter-btn:hover{
+    background-color: #d9f7be;
+    border-color: #b7eb8f;
+    color: black;
+}
+

@@ -46,3 +46,12 @@ export const setSelectedEncounter = (encounter) => {
     },
   };
 };
+
+export const setGroupInitiative = (shouldGroup) => {
+  return {
+    type: actions.SET_GROUP_INITIATIVE_SELECTOR,
+    payload: {
+      shouldGroup
+    }
+  }
+}

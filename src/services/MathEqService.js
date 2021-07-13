@@ -41,5 +41,5 @@ export const rollDice = (abilityScoreBonus) => {
   if (diceRolled === 0) {
     diceRolled = 1;
   }
-  return { value: diceRolled + abilityScoreBonus, diceRolled };
+  return { value: diceRolled + abilityScoreBonus, diceRolled: diceRolled };
 };

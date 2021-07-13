@@ -3,7 +3,7 @@ import { actions } from "../ActionEnums";
 const initialState = {
   monsters: [],
   encounterData: [],
-  selectedEncounter: {},
+  selectedEncounter: {}
 };
 
 export const EncounterReducer = (state = initialState, action) => {
@@ -39,6 +39,14 @@ export const EncounterReducer = (state = initialState, action) => {
         ...state,
         selectedEncounter: action.payload.encounter,
       };
+    case actions.SET_GROUP_INITIATIVE_SELECTOR:
+      return {
+        ...state,
+        selectedEncounter: {
+          ...state.selectedEncounter,
+          shouldGroupInit: action.payload.shouldGroup
+        }
+      }
     default:
       return state;
   }

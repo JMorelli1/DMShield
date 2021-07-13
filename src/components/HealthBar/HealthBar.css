@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
     height: 100%;
 }
 
@@ -40,4 +40,8 @@
     color: white;
     border-color: #52c41a;
     background-color: #b7eb8f;
+}
+
+.add-status-bar{
+    width: 50%;
 }

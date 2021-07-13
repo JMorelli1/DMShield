@@ -2,7 +2,7 @@ export const parseInnateSpellCastingText = (spellText) => {
   let mappedValues = new Map();
   const spellDCPattern = {
     name: "spell_save_dc",
-    pattern: /spell save DC\d{1,2}/gi,
+    pattern: /(save dc|spell save dc) \d{1,2}/gi,
   };
   const atWillPattern = {
     name: "at_will",
@@ -20,39 +20,43 @@ export const parseInnateSpellCastingText = (spellText) => {
 
   patterns.forEach((pattern) => {
     let parsedValue;
+    let perDaySpells = [];
     let temp = spellTextTrimmed.match(pattern.pattern);
     if (temp != null && temp.length >= 1) {
       temp.forEach((value) => {
         switch (pattern.name) {
           case "spell_save_dc": {
-            let parsedValue = value.replace(/spell save DC \d{1,2}/, "");
+            let parsedValue = value.replace(/\D+/gi, "");
             mappedValues.set(pattern.name, parsedValue);
             break;
           }
           case "at_will": {
-            parsedValue = value.replace(/\w+:/, "").split(",");
+            parsedValue = value.replace(/\D+:/gi, "").split(",");
             mappedValues.set(pattern.name, parsedValue);
             break;
           }
           case "per_day": {
             let splits = value.split(":");
-            let totalPerDay = splits[0].replace(/[a-z|\D]+/, "");
+            let totalPerDay = splits[0].replace(/[a-z|\D]+/gi, "");
             parsedValue = splits[1].split(",");
             let perDay = {
               totalPerDay,
               parsedValue,
             };
-            mappedValues.set(pattern.name, perDay);
+            perDaySpells = [
+              ...perDaySpells,
+              perDay
+            ]
             break;
           }
           default: {
           }
         }
+        mappedValues.set("per_day", perDaySpells);
       });
     }
   });
-  let InnateSpellCaster = { mappedValues };
-  return InnateSpellCaster;
+  return {mappedValues};
 };
 
 export const parseSpellCastingText = (spellText) => {
@@ -123,6 +127,7 @@ export const parseSpellCastingText = (spellText) => {
 
   let spellTextTrimmed = spellText.replaceAll("\n", "");
   spellTextTrimmed = spellTextTrimmed.replaceAll("•", ";");
+  console.log(spellTextTrimmed);
 
   patterns.forEach((pattern) => {
     let parsedValue;
@@ -149,8 +154,7 @@ export const parseSpellCastingText = (spellText) => {
       });
     }
   });
-  let SpellCaster = { mappedValues };
-  return SpellCaster;
+  return {mappedValues};
 };
 
 export const parseCR = (cr) => {

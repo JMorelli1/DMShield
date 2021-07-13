@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-  Button,
-  Col,
-  Input,
-  InputNumber,
-  List,
-  Row,
-  Space,
-  Table,
-  Form,
+  Button, Col, Input, InputNumber, List, Row, Space, Table, Form,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -40,7 +32,7 @@ const EncounterGenerator = (props) => {
   useEffect(
     () => {
       const loadData = async () => {
-        await getData(process.env.REACT_APP_MONSTERS_PATH, 2500).then(
+        await getData(process.env.REACT_APP_MONSTERS_PATH, 50).then(
           (data) => {
             if (data) {
               dispatch(addAllMonsters(data.results));
@@ -52,7 +44,8 @@ const EncounterGenerator = (props) => {
       loadData();
     },
     [dispatch],
-    () => {}
+    () => {
+    }
   );
 
   const handleCRTotal = (slug, type, cr) => {
@@ -60,7 +53,7 @@ const EncounterGenerator = (props) => {
       setEncounterGenerator(
         encounterGenerator.map((elem) =>
           elem.slug === slug
-            ? Object.assign({}, elem, { count: elem.count + 1 })
+            ? Object.assign({}, elem, {count: elem.count + 1})
             : elem
         )
       );
@@ -69,7 +62,7 @@ const EncounterGenerator = (props) => {
       setEncounterGenerator(
         encounterGenerator.map((elem) =>
           elem.slug === slug
-            ? Object.assign({}, elem, { count: elem.count - 1 })
+            ? Object.assign({}, elem, {count: elem.count - 1})
             : elem
         )
       );
@@ -119,6 +112,7 @@ const EncounterGenerator = (props) => {
           abilityScoreBonus: {
             strength: getAbilityScoreBonus(monster.strength),
             dexterity: getAbilityScoreBonus(monster.dexterity),
+            constitution: getAbilityScoreBonus(monster.constitution),
             intelligence: getAbilityScoreBonus(monster.intelligence),
             wisdom: getAbilityScoreBonus(monster.wisdom),
             charisma: getAbilityScoreBonus(monster.charisma),
@@ -169,12 +163,13 @@ const EncounterGenerator = (props) => {
   const monsterColumns = [
     {
       title: "",
+      key: "btnAddMonster",
       render: (record) => (
         <Button
           type="ghost"
           onClick={() => handleAddMonster(record)}
-          icon={<PlusOutlined />}
-        ></Button>
+          icon={<PlusOutlined/>}
+        />
       ),
     },
     {
@@ -199,10 +194,10 @@ const EncounterGenerator = (props) => {
       <div className="wrapper-div" key="encounterMain">
         <Row gutter={8}>
           <Col span={12}>
-            <Form style={{ margin: "2%" }}>
+            <Form style={{margin: "2%"}}>
               <Form.Item label="Encounter Name: ">
                 <Input
-                  style={{ width: "25vw" }}
+                  style={{width: "25vw"}}
                   onChange={(event) => setEncounterName(event.target.value)}
                 />
               </Form.Item>
@@ -247,13 +242,13 @@ const EncounterGenerator = (props) => {
               )}
               footer={
                 <Space size="middle">
-                  <label style={{ float: "left" }}>
+                  <label style={{float: "left"}}>
                     Total Challenge Rating: {challengeTotal}
                   </label>
                 </Space>
               }
             />
-            <Space style={{ float: "right", margin: "1%" }}>
+            <Space style={{float: "right", margin: "1%"}}>
               <Button
                 className="generate-button"
                 id="genButton"
@@ -277,7 +272,7 @@ const EncounterGenerator = (props) => {
             <Search
               placeholder="Search monsters"
               onSearch={handleSearch}
-              style={{ marginBottom: "1%" }}
+              style={{marginBottom: "1%"}}
             />
             <Table
               key="monsterTable"

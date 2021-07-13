@@ -1,19 +1,6 @@
-import {
-  Button,
-  Card,
-  Col,
-  Collapse,
-  Divider,
-  List,
-  Row,
-  Space,
-  Switch,
-  Table,
-  Tooltip,
-  Tabs,
-} from "antd";
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
+import { Card, Col, Collapse, Divider, List, Row, Space, Table, Tabs, Tooltip } from "antd";
 import chessboard from "../../assets/chessBoard.jpeg";
 import AbilityScoreList from "../../components/AbilityScoreList/AbilityScoreList";
 import ActionList from "../../components/ActionList/ActionList";
@@ -22,81 +9,16 @@ import Header from "../../components/Header/Header";
 import HealthBar from "../../components/HealthBar/HealthBar";
 import SkillsGrid from "../../components/SkillsGrid/SkillsGrid";
 import SpellCard from "../../components/SpellCard/SpellCard";
-import { setSelectedEncounter } from "../../redux/actions/EncounterActions";
-import { rollDice } from "../../services/MathEqService";
-import AddPlayersModal from "./AddPlayersModal/AddPlayersModal";
+import InitiativeControls from "./InitiativeControls/InitiativeControls";
+import _ from "lodash";
 import "./EncounterView.css";
 
-const { TabPane } = Tabs;
-const { Panel } = Collapse;
+const {TabPane} = Tabs;
+const {Panel} = Collapse;
 
-const EncounterView = (props) => {
+const EncounterView = () => {
   const selectedEncounter = useSelector((state) => state.selectedEncounter);
-  const [showModal, setShowModal] = useState(false);
-  const [groupedInitiative, setGroupedInitiative] = useState(true);
-  const dispatch = useDispatch();
   console.log(selectedEncounter);
-
-  const handleRollInitiative = () => {
-    let initEncounter = [];
-    selectedEncounter.encounter.creatures.forEach((creature) => {
-      if (creature.count === 1 || groupedInitiative) {
-        let { value, diceRolled } = rollDice(
-          creature.abilityScoreBonus.dexterity
-        );
-        initEncounter = [
-          ...initEncounter,
-          {
-            ...creature,
-            initiative: value,
-            diceRolled,
-          },
-        ];
-      } else {
-        for (let i = 1; i <= creature.count; i++) {
-          let { value, diceRolled } = rollDice(
-            creature.abilityScoreBonus.dexterity
-          );
-          initEncounter = [
-            ...initEncounter,
-            {
-              ...creature,
-              name: creature.name + "-" + i,
-              slug: creature.slug + "-" + i,
-              count: 1,
-              initiative: value,
-              diceRolled: diceRolled,
-            },
-          ];
-        }
-      }
-    });
-    initEncounter.sort((a, b) => (a.initiative > b.initiative ? -1 : 1));
-    dispatch(
-      setSelectedEncounter({
-        ...selectedEncounter,
-        encounter: {
-          ...selectedEncounter.encounter,
-          creatures: [...initEncounter],
-        },
-      })
-    );
-  };
-
-  const handleNextTurn = () => {
-    let temp = [...selectedEncounter.encounter.creatures];
-    let prevTurn = temp.splice(0, 1);
-    temp.push(prevTurn[0]);
-    dispatch(
-      setSelectedEncounter({
-        ...selectedEncounter,
-        encounter: {
-          ...selectedEncounter.encounter,
-          creatures: [...temp],
-        },
-      })
-    );
-  };
 
   const columns = [
     {
@@ -110,11 +32,12 @@ const EncounterView = (props) => {
       dataIndex: "initiative",
       key: "initiative",
       align: "center",
-      render: (record, rowIndex) => {
-        return (
-          <Tooltip title={record}>
-            <span>{record}</span>
-          </Tooltip>
+      render: (record) => {
+        return (record ?
+            <Tooltip title={`${record.diceRolled} + ${record.total - record.diceRolled} = ${record.total}`}>
+              <span>{record.total === undefined ? record : record.total}</span>
+            </Tooltip>
+            : <p>0</p>
         );
       },
     },
@@ -122,7 +45,7 @@ const EncounterView = (props) => {
 
   return (
     <div key="wrapperDiv">
-      <Header image={chessboard} />
+      <Header image={chessboard}/>
       <div key="encounterView" className="wrapper-div">
         <Row gutter={8} className="wrapper-div">
           <Col span={17}>
@@ -132,13 +55,13 @@ const EncounterView = (props) => {
               renderItem={(creature) => (
                 <List.Item>
                   <Collapse
-                    style={{ width: "100%" }}
+                    style={{width: "100%"}}
                     {...(selectedEncounter.encounter.creatures[0].slug !==
                     undefined
                       ? {
-                          activeKey:
-                            selectedEncounter.encounter.creatures[0].slug,
-                        }
+                        activeKey:
+                        selectedEncounter.encounter.creatures[0].slug,
+                      }
                       : null)}
                   >
                     <Panel
@@ -164,23 +87,23 @@ const EncounterView = (props) => {
                         }
                         className="ecounter-view-list"
                       >
-                        <HealthBar creature={creature} />
-                        <Divider />
+                        <HealthBar creature={creature}/>
+                        <Divider/>
                         <Tabs defaultActiveKey="abilities">
                           <TabPane tab="Abilities" key="abilities">
                             <>
-                              <AbilityScoreList creature={creature} />
-                              <Divider />
+                              <AbilityScoreList creature={creature}/>
+                              <Divider/>
                               <Collapse ghost>
-                                <Panel header="Skills">
-                                  <SkillsGrid skills={creature.skills} />
+                                <Panel header="Skills" key={"skills-panel"}>
+                                  <SkillsGrid creature={creature}/>
                                 </Panel>
                               </Collapse>
-                              <br />
-                              <ConditionsList creature={creature} />
-                              <Divider />
+                              <br/>
+                              <ConditionsList creature={creature}/>
+                              <Divider/>
                               <Collapse ghost>
-                                <Panel header="Actions">
+                                <Panel header="Actions" key={"actions-panel"}>
                                   <ActionList
                                     dataSource={creature.actions}
                                     actionType={"ordinary"}
@@ -193,7 +116,7 @@ const EncounterView = (props) => {
                                       ? "disabled"
                                       : "enabled"
                                   }
-                                >
+                                  key={"special-abilities-panel"}>
                                   <ActionList
                                     dataSource={creature.special_abilities}
                                     actionType={"special"}
@@ -206,7 +129,7 @@ const EncounterView = (props) => {
                                       ? "disabled"
                                       : "enabled"
                                   }
-                                >
+                                  key={"legendary-abilities-panel"}>
                                   <p>{creature.legendary_desc}</p>
                                   <ActionList
                                     dataSource={creature.legendary_actions}
@@ -216,8 +139,8 @@ const EncounterView = (props) => {
                               </Collapse>
                             </>
                           </TabPane>
-                          <TabPane tab="Spells">
-                            <SpellCard creature={creature} />
+                          <TabPane tab="Spells" disabled={creature.spells.length === 0 | _.isEmpty(creature.spells)}>
+                            <SpellCard creature={creature}/>
                           </TabPane>
                         </Tabs>
                       </Card>
@@ -228,23 +151,7 @@ const EncounterView = (props) => {
             />
           </Col>
           <Col span={7}>
-            <Space style={{ marginBottom: "1%" }}>
-              <Space direction="vertical">
-                <Button onClick={handleRollInitiative}>Roll Initiative</Button>
-                <Button onClick={handleNextTurn}>Next Turn</Button>
-              </Space>
-              <Space direction="vertical">
-                <label>Group Initiative:</label>
-                <Switch
-                  defaultChecked
-                  onChange={() => setGroupedInitiative(!groupedInitiative)}
-                />
-
-                <Button type="primary" onClick={() => setShowModal(!showModal)}>
-                  Add Players
-                </Button>
-              </Space>
-            </Space>
+            <InitiativeControls/>
             <Table
               rowClassName={(record, index) =>
                 index === 0 ? "table-row-light" : ""
@@ -255,7 +162,6 @@ const EncounterView = (props) => {
             />
           </Col>
         </Row>
-        <AddPlayersModal isShown={showModal} setIsShown={setShowModal} />
       </div>
     </div>
   );

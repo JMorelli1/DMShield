@@ -20,8 +20,9 @@ const EncounterTracker = (props) => {
   const encounterColumns = [
     {
       title: "",
+      key:"btnView",
       render: (record) => (
-        <Button type="ghost" onClick={() => handleView(record)}>
+        <Button key="btnView" type="ghost" onClick={() => handleView(record)}>
           View
         </Button>
       ),
@@ -67,7 +68,7 @@ const EncounterTracker = (props) => {
         </Row>
       </div>
       <div hidden={!clicked}>
-        <EncounterGenerator setClicked={setClicked} clicked={clicked} />
+        <EncounterGenerator key="encounterGen" setClicked={setClicked} clicked={clicked} />
       </div>
     </div>
   );

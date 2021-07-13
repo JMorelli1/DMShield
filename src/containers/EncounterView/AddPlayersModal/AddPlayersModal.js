@@ -13,9 +13,21 @@ const AddPlayersModal = ({ isShown, setIsShown }) => {
   const [form] = Form.useForm();
 
   const handleOk = () => {
-    let players = form.getFieldValue("players");
+    let players = form.getFieldValue("players").map(player => {
+      return {
+        name: player.name,
+        initiative: {
+          total: player.initiative,
+          diceRolled: 0,
+        },
+        spells: []
+      }
+    });
+    console.log(players)
     let newList = [...currentCreatures, ...players];
-    newList.sort((a, b) => (a.initiative > b.initiative ? -1 : 1));
+    console.log(newList)
+    newList.sort((a, b) => (a.initiative.total > b.initiative.total ? -1 : 1));
+    console.log(newList)
     dispatch(setSelectedEncounterCreatures(newList));
     form.resetFields();
     setIsShown(!isShown);

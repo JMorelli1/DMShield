@@ -1,29 +1,24 @@
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import { Button, Card, Col, Row, Space, Modal, Spin, Descriptions } from "antd";
+import { Button, Card, Col, Descriptions, Empty, Modal, Row, Space, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { getSpell } from "../../services/Open5eService";
-// import { useDispatch, useSelector } from "react-redux";
+import _ from "lodash";
 import "./SpellCard.css";
 
-const SpellCard = ({ creature }) => {
-  // const currentCreatures = useSelector(
-  //   (state) => state.selectedEncounter.encounter.creatures
-  // );
-  // const dispatch = useDispatch();
+const SpellCard = ({creature}) => {
   const [loading, setLoading] = useState();
-  const [innateSpells, setInnateSpells] = useState({});
+  const [innateSpells, setInnateSpells] = useState(new Map());
+  const [spells, setSpells] = useState(new Map());
   const [showInnateSpells, setShowInnateSpells] = useState(false);
-  const [spells, setSpells] = useState({});
   const [showSpells, setShowSpells] = useState(false);
 
   useEffect(() => {
-    console.log(creature);
     if (creature.spells.innate_spell_caster !== undefined) {
-      setInnateSpells(creature.spells.innate_spell_caster);
+      setInnateSpells(creature.spells.innate_spell_caster.mappedValues);
       setShowInnateSpells(true);
     }
     if (creature.spells.spell_caster !== undefined) {
-      setSpells(creature.spells.spell_caster);
+      setSpells(creature.spells.spell_caster.mappedValues);
       setShowSpells(true);
     }
   }, [creature, spells, innateSpells]);
@@ -49,7 +44,7 @@ const SpellCard = ({ creature }) => {
       width: "60vw",
       className: "info-modal",
       content: loading ? (
-        <Spin />
+        <Spin/>
       ) : (
         <div>
           <Descriptions layout="horizontal" column={1}>
@@ -69,7 +64,7 @@ const SpellCard = ({ creature }) => {
               <label>Components: {spellData.components}</label>
             </Descriptions.Item>
             <Descriptions.Item>
-              <label>Ritual Castable: {spellData.ritual}</label>
+              <label>Ritually Castable: {spellData.ritual}</label>
             </Descriptions.Item>
             <Descriptions.Item>
               <label>School of Magic: {spellData.school}</label>
@@ -84,71 +79,47 @@ const SpellCard = ({ creature }) => {
     });
   };
 
-  const SpellLevelCards = ({ level, title }) => {
+  const SpellLevelCards = ({level, title}) => {
     return (
       <Col span={8}>
         <Card title={title} className="spell-card-style">
-          {level.map((value) => (
-            <div style={{ textAlign: "left" }}>
-              <Button
-                onClick={() => SpellInfoModal(value)}
-                icon={<QuestionCircleOutlined />}
-              ></Button>
-              <span>{value}</span>
-            </div>
-          ))}
+          {_.isEmpty(level)
+            ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}/>
+            : level.map((value, index) => (
+              <div style={{textAlign: "left"}}>
+                <Button
+                  key={index}
+                  onClick={() => SpellInfoModal(value)}
+                  icon={<QuestionCircleOutlined/>}
+                />
+                <span>{value}</span>
+              </div>
+            ))}
         </Card>
       </Col>
     );
   };
 
-  const InnateSpellCasterCard = ({ visible }) => {
-    return visible ? (
-      <Card title="Innate Spell Caster Attributes">
-        <label>
-          Spell Save DC: {innateSpells.mappedValues.get("spell_save_dc")}
-        </label>
-        <label>
-          Spell Attack Bonus: {innateSpells.mappedValues.get("spell_attack")}
-        </label>
-      </Card>
-    ) : (
-      <Spin />
-    );
-  };
-
-  const SpellCasterCard = ({ visible }) => {
-    return visible ? (
+  const InnateSpellCasterCard = () => {
+    return (
       <>
         <Row sm={2}>
           <Col span={12}>
-            <Card title="Spell Caster Attributes">
-              <Space>
-                <label>
-                  Spell Save DC:{" "}
-                  {spells.mappedValues.has("spell_save_dc")
-                    ? spells.mappedValues.get("spell_save_dc")
-                    : "None"}
-                </label>
-                <br />
-                <label>
-                  Spell Attack Modifier:{" "}
-                  {spells.mappedValues.has("spell_attack")
-                    ? spells.mappedValues.get("spell_attack")
-                    : "0"}
-                </label>
-              </Space>
+            <Card title="Innate Spell Caster Attributes" style={{height: "100%"}}>
+              <label>
+                Spell Save DC: {innateSpells.get("spell_save_dc")}
+              </label>
             </Card>
           </Col>
           <Col span={12}>
-            {spells.mappedValues.has("cantrips") ? (
-              <Card title="Cantrips">
-                {spells.mappedValues.get("cantrips").map((value) => (
-                  <div style={{ textAlign: "left" }}>
+            {innateSpells.has("at_will") ? (
+              <Card title="At Will">
+                {innateSpells.get("at_will").map((value) => (
+                  <div style={{textAlign: "left"}}>
                     <Button
                       onClick={() => SpellInfoModal(value)}
-                      icon={<QuestionCircleOutlined />}
-                    ></Button>
+                      icon={<QuestionCircleOutlined/>}
+                    />
                     <span>{value}</span>
                   </div>
                 ))}
@@ -157,71 +128,103 @@ const SpellCard = ({ creature }) => {
           </Col>
         </Row>
         <Row sm={3}>
-          {spells.mappedValues.has("1st_level") ? (
-            <SpellLevelCards
-              level={spells.mappedValues.get("1st_level")}
-              title={"1st Level"}
-            />
-          ) : null}
-          {spells.mappedValues.has("2nd_level") ? (
-            <SpellLevelCards
-              level={spells.mappedValues.get("2nd_level")}
-              title={"2nd_level"}
-            />
-          ) : null}
-          {spells.mappedValues.has("3rd_level") ? (
-            <SpellLevelCards
-              level={spells.mappedValues.get("3rd_level")}
-              title={"3rd Level"}
-            />
-          ) : null}
-          {spells.mappedValues.has("4th_level") ? (
-            <SpellLevelCards
-              level={spells.mappedValues.get("4th_level")}
-              title={"4th Level"}
-            />
-          ) : null}
-          {spells.mappedValues.has("5th_level") ? (
-            <SpellLevelCards
-              level={spells.mappedValues.get("5th_level")}
-              title={"5th Level"}
-            />
-          ) : null}
-          {spells.mappedValues.has("6th_level") ? (
-            <SpellLevelCards
-              level={spells.mappedValues.get("6th_level")}
-              title={"6th Level"}
-            />
-          ) : null}
-          {spells.mappedValues.has("7th_level") ? (
-            <SpellLevelCards
-              level={spells.mappedValues.get("7th_level")}
-              title={"7th Level"}
-            />
-          ) : null}
-          {spells.mappedValues.has("8th_level") ? (
-            <SpellLevelCards
-              level={spells.mappedValues.get("8th_level")}
-              title={"8th Level"}
-            />
-          ) : null}
-          {spells.mappedValues.has("9th_level") ? (
-            <SpellLevelCards
-              level={spells.mappedValues.get("9th_level")}
-              title={"9th Level"}
-            />
-          ) : null}
+          {innateSpells.get('per_day').map(spells => {
+            return (
+              <SpellLevelCards
+                level={spells.parsedValue}
+                title={`${spells.totalPerDay} Per Day`}
+              />
+            );
+          })}
+        </Row>
+      </>);
+  };
+
+  const SpellCasterCard = () => {
+    return (
+      <>
+        <Row sm={2}>
+          <Col span={12}>
+            <Card title="Spell Caster Attributes" style={{height: "100%"}}>
+              <Space direction={"vertical"}>
+                <label>
+                  Spell Save DC:{" "}
+                  {spells.has("spell_save_dc")
+                    ? spells.get("spell_save_dc")
+                    : "None"}
+                </label>
+                <br/>
+                <label>
+                  Spell Attack Modifier:{" "}
+                  {spells.has("spell_attack")
+                    ? spells.get("spell_attack")
+                    : "0"}
+                </label>
+              </Space>
+            </Card>
+          </Col>
+          <Col span={12}>
+            {spells.has("cantrips") ? (
+              <Card title="Cantrips" extra={"At Will"}>
+                {spells.get("cantrips").map((value) => (
+                  <div style={{textAlign: "left"}}>
+                    <Button
+                      onClick={() => SpellInfoModal(value)}
+                      icon={<QuestionCircleOutlined/>}
+                    />
+                    <span>{value}</span>
+                  </div>
+                ))}
+              </Card>
+            ) : null}
+          </Col>
+        </Row>
+        <Row sm={3}>
+          <SpellLevelCards
+            level={spells.get("1st_level")}
+            title={"1st Level"}
+          />
+          <SpellLevelCards
+            level={spells.get("2nd_level")}
+            title={"2nd_level"}
+          />
+          <SpellLevelCards
+            level={spells.get("3rd_level")}
+            title={"3rd Level"}
+          />
+          <SpellLevelCards
+            level={spells.get("4th_level")}
+            title={"4th Level"}
+          />
+          <SpellLevelCards
+            level={spells.get("5th_level")}
+            title={"5th Level"}
+          />
+          <SpellLevelCards
+            level={spells.get("6th_level")}
+            title={"6th Level"}
+          />
+          <SpellLevelCards
+            level={spells.get("7th_level")}
+            title={"7th Level"}
+          />
+          <SpellLevelCards
+            level={spells.get("8th_level")}
+            title={"8th Level"}
+          />
+          <SpellLevelCards
+            level={spells.get("9th_level")}
+            title={"9th Level"}
+          />
         </Row>
       </>
-    ) : (
-      <Spin />
     );
   };
 
   return (
     <>
-      <InnateSpellCasterCard visible={showInnateSpells} />
-      <SpellCasterCard visible={showSpells} />
+      {showInnateSpells ? <InnateSpellCasterCard/> : null}
+      {showSpells ? <SpellCasterCard/> : null}
     </>
   );
 };

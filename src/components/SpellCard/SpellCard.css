@@ -13,3 +13,6 @@ span{
 p{
     text-transform: none;
 }
+label{
+    font-size: larger;
+}
