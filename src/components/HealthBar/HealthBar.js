@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Badge, Button, Col, Descriptions, Divider, Input, List, Progress, Row, Select, Space, Tooltip } from "antd";
+import {
+  Badge, Button, Col, Descriptions, Divider, Input, List, Popover, Progress, Row, Select, Space, Tooltip
+} from "antd";
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedEncounterCreatures } from "../../redux/actions/EncounterActions";
 import { addStatusesToLocal, getStatusesInLocal } from "../../services/Storage";
@@ -16,8 +19,8 @@ const HealthBar = ({creature}) => {
   const [value, setValue] = useState(0);
   const [percentage, setPercentage] = useState();
   const [statuses, setStatuses] = useState({})
-  const [activeStatuses, setActiveStatuses] = useState([]);
   const dispatch = useDispatch();
+  let speed = _.toPairs(creature.speed);
 
   useEffect(() => {
     setPercentage((creature.current_hp / creature.hit_points) * 100);
@@ -34,8 +37,10 @@ const HealthBar = ({creature}) => {
     if (!localStorageStatuses) {
       loadStatuses();
     }
-    setStatuses(localStorageStatuses)
-  }, [encounterCreatures, creature]);
+    if (_.isEmpty(statuses)) {
+      setStatuses(localStorageStatuses)
+    }
+  }, [encounterCreatures, creature, statuses]);
 
   const handlePercentage = (event) => {
     if (event.currentTarget.id === "damageBtn") {
@@ -62,13 +67,53 @@ const HealthBar = ({creature}) => {
     dispatch(setSelectedEncounterCreatures(updatedCreatures));
   };
 
-  const handleOnChange = (value) => {
-    setActiveStatuses([
-      ...activeStatuses,
-      statuses.results[value]]);
+  const addStatusToCreature = (value) => {
+    console.log(value)
+    let updatedCreatures = encounterCreatures.map((cr) => {
+      if (creature.slug === cr.slug) {
+        let statusToAdd = statuses.results[value]
+        statuses.results.splice(value, 1);
+        setStatuses({
+          ...statuses,
+          results: statuses.results
+        })
+        return {
+          ...cr,
+          active_statuses: [
+            ...cr.active_statuses,
+            statusToAdd
+          ],
+        };
+      }
+      return cr;
+    });
+    // setStatuses()
+    dispatch(setSelectedEncounterCreatures(updatedCreatures));
   }
 
-  let speed = _.toPairs(creature.speed);
+  const removeStatus = (removalStatus) => {
+    console.log(removalStatus)
+    let updatedCreatures = encounterCreatures.map((cr) => {
+      if (creature.slug === cr.slug) {
+        setStatuses(
+          {
+            ...statuses,
+            results: [
+              ...statuses.results,
+              removalStatus
+            ].sort((a, b) => a.slug > b.slug ? 1 : -1),
+          }
+        );
+        return {
+          ...cr,
+          active_statuses: cr.active_statuses.filter(status => status.slug !== removalStatus.slug)
+        };
+      }
+      return cr;
+    });
+    dispatch(setSelectedEncounterCreatures(updatedCreatures));
+  }
+
   return (
     <>
       <Row>
@@ -86,26 +131,29 @@ const HealthBar = ({creature}) => {
             <Descriptions.Item>
               <label>CR: {creature.challenge_rating}</label>
             </Descriptions.Item>
+            <Descriptions.Item>
+              <Popover content={
+                <List
+                  dataSource={speed}
+                  renderItem={(item) => (
+                    <List.Item>
+                      <label className={"speed-label"}>{item[0]}: </label> {item[1]}
+                    </List.Item>
+                  )}
+                />
+              } placement={"right"}>
+                <label>Speed <InfoCircleOutlined/></label>
+              </Popover>
+            </Descriptions.Item>
           </Descriptions>
         </Col>
-        <Col span={4}>
+        <Col span={8}>
           <h1>Health</h1>
           <Progress
             type="dashboard"
             percent={percentage}
             status="exception"
             format={(percent) => `${creature.current_hp}/${creature.hit_points}`}
-          />
-        </Col>
-        <Col span={4}>
-          <h1>Speed</h1>
-          <List
-            dataSource={speed}
-            renderItem={(item) => (
-              <List.Item>
-                <label>{item[0]}: </label> {item[1]}
-              </List.Item>
-            )}
           />
         </Col>
         <Col span={8}>
@@ -132,26 +180,35 @@ const HealthBar = ({creature}) => {
                 Heal
               </Button>
             </div>
-            <Select className={"add-status-bar"} placeholder={"Add Status"} onChange={handleOnChange} value={"Add Status"}>
-              {statuses.results !== undefined ? statuses.results.map((status, index) => {
-                return (
-                  <Option value={index}>
-                    {status.name}
-                  </Option>
-                )
-              }) : null}
+            <Select className={"add-status-bar"} placeholder={"Add Status"} onChange={addStatusToCreature}
+                    value={"Add Status"}>
+              {statuses.results !== undefined
+                ? statuses.results.map((status, index) => {
+                  return (
+                    <Option value={index}>
+                      {status.name}
+                    </Option>
+                  )
+                })
+                : null}
             </Select>
           </div>
         </Col>
       </Row>
-      {activeStatuses.length > 0
-        ? <div>
+      {creature.active_statuses.length > 0
+        ? <div className={"health-bar-div"}>
           <Divider/>
+          <h2>Active Statuses</h2>
           <Space>
-            {activeStatuses.map(status => {
+            {creature.active_statuses.map(status => {
               return (
-                <Tooltip title={status.desc}>
-                  <Badge status={"processing"} text={status.name}/>
+                <Tooltip title={status.desc} placement={"right"}>
+                  <div className={"status-buttons"} key={status.slug}>
+                    <Badge status={"processing"} text={
+                      <Button className={"remove-status-btn"} onClick={() => removeStatus(status)}>
+                        {status.name}
+                      </Button>}/>
+                  </div>
                 </Tooltip>
               );
             })}

@@ -16,3 +16,24 @@ p{
 label{
     font-size: larger;
 }
+
+.spell-btn{
+    text-align: left;
+}
+
+.spell-btn .spell-info{
+    padding: 0;
+    width: 25px;
+    box-shadow: unset;
+    border-color: white;
+}
+
+.spell-btn .spell-info:hover{
+    box-shadow: unset;
+    border-color: white;
+}
+
+.spell-btn .spell-cast{
+    margin-right: 3%;
+    margin-bottom: 2%;
+}

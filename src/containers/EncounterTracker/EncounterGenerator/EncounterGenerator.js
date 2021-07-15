@@ -117,6 +117,7 @@ const EncounterGenerator = (props) => {
             wisdom: getAbilityScoreBonus(monster.wisdom),
             charisma: getAbilityScoreBonus(monster.charisma),
           },
+          active_statuses: [],
         },
       ]);
     }

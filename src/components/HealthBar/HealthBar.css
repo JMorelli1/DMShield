@@ -3,7 +3,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
-    height: 100%;
+    height: 75%;
+    max-height: 125px;
 }
 
 .health-bar-input{
@@ -12,14 +13,12 @@
 
 .health-bar-buttons{
     width: 200px;
-    margin-top: 8px;
     display: flex;
-    justify-content: stretch;
+    justify-content: space-between;
 }
 
 .health-bar-buttons .damage-button{
     width: 95px;
-    margin-right: 10px;
     border-color: #ff4d4f;
     background-color: #ffa39e;
 }
@@ -44,4 +43,23 @@
 
 .add-status-bar{
     width: 50%;
+}
+
+.status-buttons .remove-status-btn{
+    border: unset;
+    box-shadow: unset;
+    padding: 0;
+    font-size: larger;
+}
+
+.status-buttons .remove-status-btn:hover{
+    color: red;
+    border: unset;
+    box-shadow: unset;
+    padding: 0;
+
+}
+
+.speed-label{
+    text-transform: capitalize;
 }

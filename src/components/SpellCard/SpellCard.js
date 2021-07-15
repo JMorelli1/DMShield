@@ -81,22 +81,22 @@ const SpellCard = ({creature}) => {
 
   const SpellLevelCards = ({level, title}) => {
     return (
-      <Col span={8}>
-        <Card title={title} className="spell-card-style">
-          {_.isEmpty(level)
-            ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}/>
-            : level.map((value, index) => (
-              <div style={{textAlign: "left"}}>
-                <Button
-                  key={index}
-                  onClick={() => SpellInfoModal(value)}
-                  icon={<QuestionCircleOutlined/>}
-                />
-                <span>{value}</span>
-              </div>
-            ))}
-        </Card>
-      </Col>
+      <Card title={title} className="spell-card-style">
+        {_.isEmpty(level)
+          ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}/>
+          : level.map((value, index) => (
+            <div className={"spell-btn"}>
+              <Button className={"spell-cast"}>Cast</Button>
+              <span>{value}</span>
+              <Button
+                key={index}
+                className={"spell-info"}
+                onClick={() => SpellInfoModal(value)}
+                icon={<QuestionCircleOutlined/>}
+              />
+            </div>
+          ))}
+      </Card>
     );
   };
 
@@ -115,8 +115,9 @@ const SpellCard = ({creature}) => {
             {innateSpells.has("at_will") ? (
               <Card title="At Will">
                 {innateSpells.get("at_will").map((value) => (
-                  <div style={{textAlign: "left"}}>
+                  <div className={"spell-btn"} key={value.slug}>
                     <Button
+                      className={"spell-info"}
                       onClick={() => SpellInfoModal(value)}
                       icon={<QuestionCircleOutlined/>}
                     />
@@ -165,57 +166,81 @@ const SpellCard = ({creature}) => {
           </Col>
           <Col span={12}>
             {spells.has("cantrips") ? (
-              <Card title="Cantrips" extra={"At Will"}>
-                {spells.get("cantrips").map((value) => (
-                  <div style={{textAlign: "left"}}>
-                    <Button
-                      onClick={() => SpellInfoModal(value)}
-                      icon={<QuestionCircleOutlined/>}
-                    />
-                    <span>{value}</span>
-                  </div>
-                ))}
-              </Card>
+              // <Card title="Cantrips" extra={"At Will"}>
+              //   {spells.get("cantrips").map((value) => (
+              //     <div className={"spell-btn"} key={value.slug}>
+              //       <Button>Cast</Button>
+              //       <span>{value}</span>
+              //       <Button
+              //         className={"spell-info"}
+              //         onClick={() => SpellInfoModal(value)}
+              //         icon={<QuestionCircleOutlined/>}
+              //       />
+              //     </div>
+              //   ))}
+              // </Card>
+              <SpellLevelCards
+                level={spells.get("cantrips")}
+                title={"Cantrips"}
+              />
             ) : null}
           </Col>
         </Row>
         <Row sm={3}>
-          <SpellLevelCards
-            level={spells.get("1st_level")}
-            title={"1st Level"}
-          />
-          <SpellLevelCards
-            level={spells.get("2nd_level")}
-            title={"2nd_level"}
-          />
-          <SpellLevelCards
-            level={spells.get("3rd_level")}
-            title={"3rd Level"}
-          />
-          <SpellLevelCards
-            level={spells.get("4th_level")}
-            title={"4th Level"}
-          />
-          <SpellLevelCards
-            level={spells.get("5th_level")}
-            title={"5th Level"}
-          />
-          <SpellLevelCards
-            level={spells.get("6th_level")}
-            title={"6th Level"}
-          />
-          <SpellLevelCards
-            level={spells.get("7th_level")}
-            title={"7th Level"}
-          />
-          <SpellLevelCards
-            level={spells.get("8th_level")}
-            title={"8th Level"}
-          />
-          <SpellLevelCards
-            level={spells.get("9th_level")}
-            title={"9th Level"}
-          />
+          <Col span={8}>
+            <SpellLevelCards
+              level={spells.get("1st_level")}
+              title={"1st Level"}
+            />
+          </Col>
+          <Col span={8}>
+            <SpellLevelCards
+              level={spells.get("2nd_level")}
+              title={"2nd_level"}
+            />
+          </Col>
+          <Col span={8}>
+            <SpellLevelCards
+              level={spells.get("3rd_level")}
+              title={"3rd Level"}
+            />
+          </Col>
+          <Col span={8}>
+            <SpellLevelCards
+              level={spells.get("4th_level")}
+              title={"4th Level"}
+            />
+          </Col>
+          <Col span={8}>
+            <SpellLevelCards
+              level={spells.get("5th_level")}
+              title={"5th Level"}
+            />
+          </Col>
+          <Col span={8}>
+            <SpellLevelCards
+              level={spells.get("6th_level")}
+              title={"6th Level"}
+            />
+          </Col>
+          <Col span={8}>
+            <SpellLevelCards
+              level={spells.get("7th_level")}
+              title={"7th Level"}
+            />
+          </Col>
+          <Col span={8}>
+            <SpellLevelCards
+              level={spells.get("8th_level")}
+              title={"8th Level"}
+            />
+          </Col>
+          <Col span={8}>
+            <SpellLevelCards
+              level={spells.get("9th_level")}
+              title={"9th Level"}
+            />
+          </Col>
         </Row>
       </>
     );

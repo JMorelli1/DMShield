@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Card, Col, Collapse, Divider, List, Row, Space, Table, Tabs, Tooltip } from "antd";
+import { Card, Col, Collapse, Divider, List, Row, Space, Table, Tabs, Tag, Tooltip } from "antd";
 import chessboard from "../../assets/chessBoard.jpeg";
 import AbilityScoreList from "../../components/AbilityScoreList/AbilityScoreList";
 import ActionList from "../../components/ActionList/ActionList";
@@ -26,6 +26,11 @@ const EncounterView = () => {
       dataIndex: "name",
       key: "name",
       align: "center",
+      render: (record) => {
+        return (
+          <label style={{fontSize:"medium"}}>{record} <Tag color="gold" style={{fontSize:"xx-small"}}>Legendary</Tag></label>
+        );
+      }
     },
     {
       title: "Initiative",
@@ -88,7 +93,6 @@ const EncounterView = () => {
                         className="ecounter-view-list"
                       >
                         <HealthBar creature={creature}/>
-                        <Divider/>
                         <Tabs defaultActiveKey="abilities">
                           <TabPane tab="Abilities" key="abilities">
                             <>
